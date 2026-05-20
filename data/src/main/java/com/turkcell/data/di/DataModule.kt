@@ -1,12 +1,14 @@
 package com.turkcell.data.di
 
-import org.koin.core.qualifier.named
-import com.turkcell.data.network.TokenAuthenticator
 import com.turkcell.core.domain.AuthRepository
+import com.turkcell.core.domain.TicketRepository
 import com.turkcell.data.local.TokenStore
 import com.turkcell.data.network.AuthInterceptor
+import com.turkcell.data.network.TokenAuthenticator
 import com.turkcell.data.remote.AuthApi
+import com.turkcell.data.remote.TicketApi
 import com.turkcell.data.repository.AuthRepositoryImpl
+import com.turkcell.data.repository.TicketRepositoryImpl
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -17,21 +19,11 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 private const val BASE_URL = "https://tickets-api.halitkalayci.com/"
 
-private val REFRESH_CLIENT = named("refresh_client")
-private val REFRESH_RETROFIT = named("refresh_retrofit")
-private val REFRESH_API = named("refresh_api")
-
-
 val dataModule = module {
-    // Scope (Kapsam)
-    // 3 temel seçenek
 
-    // Yaşam döngüsündeki bağımlılığın davranış biçimi
-
-    // Single (Singleton) -> Uygulama yaşam döngüsü boyunca tek örnek.
     single {
         Json {
-            ignoreUnknownKeys = true // Cevapta var olan ama classta olmayan alanları ignore et.
+            ignoreUnknownKeys = true
             explicitNulls = false
             isLenient = true
         }
@@ -43,19 +35,19 @@ val dataModule = module {
         }
     }
 
-    single {
-        TokenStore(context=get())
-    }
+    single { TokenStore(context = get()) }
+
     single { AuthInterceptor(tokenStore = get()) }
 
     single {
         TokenAuthenticator(
             tokenStore = get(),
-            refreshApiProvider = get(REFRESH_API)
+            // HATANIN ÇÖZÜLDÜĞÜ YER: Olmayan REFRESH_API'yi aramak yerine,
+            // doğrudan Koin'in bildiği mevcut AuthApi'yi lambda olarak veriyoruz.
+            refreshApiProvider = { get() }
         )
     }
 
-    // HTTP isteklerini yönetmek..
     single {
         OkHttpClient.Builder()
             .addInterceptor(get<AuthInterceptor>())
@@ -72,6 +64,8 @@ val dataModule = module {
             .build()
     }
 
+    // --- API & REPOSITORY TANIMLAMALARI ---
+
     single { get<Retrofit>().create(AuthApi::class.java) }
 
     single<AuthRepository> {
@@ -81,7 +75,11 @@ val dataModule = module {
         )
     }
 
-    // factory -> Her çağırıldığı noktada yeni instance üretir. Her fonksiyon için birer örnek
+    single { get<Retrofit>().create(TicketApi::class.java) }
 
-    // scoped -> Class -> tüm fonksiyonlarına 1 örnek
+    single<TicketRepository> {
+        TicketRepositoryImpl(
+            ticketApi = get()
+        )
+    }
 }
