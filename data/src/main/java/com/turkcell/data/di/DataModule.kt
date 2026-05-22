@@ -1,14 +1,14 @@
 package com.turkcell.data.di
 
-import com.turkcell.core.domain.AuthRepository
-import com.turkcell.core.domain.TicketRepository
+import com.turkcell.core.domain.auth.AuthRepository
+import com.turkcell.core.domain.event.EventRepository
 import com.turkcell.data.local.TokenStore
 import com.turkcell.data.network.AuthInterceptor
 import com.turkcell.data.network.TokenAuthenticator
 import com.turkcell.data.remote.AuthApi
-import com.turkcell.data.remote.TicketApi
+import com.turkcell.data.remote.EventApi
 import com.turkcell.data.repository.AuthRepositoryImpl
-import com.turkcell.data.repository.TicketRepositoryImpl
+import com.turkcell.data.repository.EventRepositoryImpl
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -21,6 +21,7 @@ private const val BASE_URL = "https://tickets-api.halitkalayci.com/"
 
 val dataModule = module {
 
+    // 1. JSON Ayarları
     single {
         Json {
             ignoreUnknownKeys = true
@@ -29,12 +30,7 @@ val dataModule = module {
         }
     }
 
-    single {
-        HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-    }
-
+    // 2. Token ve Interceptor'lar
     single { TokenStore(context = get()) }
 
     single { AuthInterceptor(tokenStore = get()) }
@@ -42,10 +38,15 @@ val dataModule = module {
     single {
         TokenAuthenticator(
             tokenStore = get(),
-            // HATANIN ÇÖZÜLDÜĞÜ YER: Olmayan REFRESH_API'yi aramak yerine,
-            // doğrudan Koin'in bildiği mevcut AuthApi'yi lambda olarak veriyoruz.
             refreshApiProvider = { get() }
         )
+    }
+
+    // 3. OkHttp ve Retrofit
+    single {
+        HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
     }
 
     single {
@@ -64,9 +65,10 @@ val dataModule = module {
             .build()
     }
 
-    // --- API & REPOSITORY TANIMLAMALARI ---
-
+    // 4. API ve Repository Tanımlamaları
     single { get<Retrofit>().create(AuthApi::class.java) }
+
+    single { get<Retrofit>().create(EventApi::class.java) }
 
     single<AuthRepository> {
         AuthRepositoryImpl(
@@ -75,11 +77,9 @@ val dataModule = module {
         )
     }
 
-    single { get<Retrofit>().create(TicketApi::class.java) }
-
-    single<TicketRepository> {
-        TicketRepositoryImpl(
-            ticketApi = get()
+    single<EventRepository> {
+        EventRepositoryImpl(
+            eventApi = get()
         )
     }
 }

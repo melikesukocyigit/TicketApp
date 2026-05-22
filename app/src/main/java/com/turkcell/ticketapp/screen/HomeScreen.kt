@@ -33,8 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.turkcell.core.domain.Event
-import com.turkcell.core.domain.Ticket
+import com.turkcell.core.domain.event.Event
+import com.turkcell.core.domain.event.Ticket
 import com.turkcell.ticketapp.viewmodel.HomeTab
 import com.turkcell.ticketapp.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel

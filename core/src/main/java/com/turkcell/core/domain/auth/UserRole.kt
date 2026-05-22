@@ -1,4 +1,4 @@
-package com.turkcell.core.domain
+package com.turkcell.core.domain.auth
 
 enum class UserRole {
     USER, STAFF, ADMIN;

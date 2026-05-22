@@ -1,5 +1,6 @@
-package com.turkcell.core.domain
+package com.turkcell.core.domain.auth
 
+import com.turkcell.core.domain.auth.AuthSession
 import kotlinx.coroutines.flow.Flow
 
 // Soyut Sözleşme: ne yapılacağını belirtir, nasıl yapılacağını değil.

@@ -1,10 +1,10 @@
 package com.turkcell.data.repository
 
-import com.turkcell.core.domain.AuthRepository
-import com.turkcell.core.domain.AuthSession
-import com.turkcell.core.domain.User
-import com.turkcell.core.domain.UserRole
-import com.turkcell.data.dto.CredentialsDto
+import com.turkcell.core.domain.auth.AuthRepository
+import com.turkcell.core.domain.auth.AuthSession
+import com.turkcell.core.domain.auth.User
+import com.turkcell.core.domain.auth.UserRole
+import com.turkcell.data.dto.auth.CredentialsDto
 import com.turkcell.data.local.TokenStore
 import com.turkcell.data.remote.AuthApi
 import com.turkcell.data.util.runCatchingApi
@@ -16,7 +16,7 @@ class AuthRepositoryImpl(
     private val tokenStore: TokenStore
 ) : AuthRepository {
 
-    // Token varsa true, yoksa false döner. UI burayı dinleyip Home sayfasına otomatik geçer.
+    // Kullanıcının giriş yapıp yapmadığını token'ın varlığına göre dinliyoruz
     override val isLoggedIn: Flow<Boolean> = tokenStore.accessToken.map { it != null }
 
     override suspend fun login(
@@ -24,9 +24,9 @@ class AuthRepositoryImpl(
         password: String
     ): Result<AuthSession> = runCatchingApi {
         authApi.login(CredentialsDto(email = email, password = password))
-    }.onSuccess { tokenPairDto ->
-        // Başarılı girişte Token'ları cihaza kalıcı olarak kaydet
-        tokenStore.save(tokenPairDto.accessToken, tokenPairDto.refreshToken)
+    }.onSuccess {
+        // Giriş başarılı olursa API'den gelen token'ları DataStore'a kaydet
+        tokenStore.save(it.accessToken, it.refreshToken)
     }.map { tokenPairDto ->
         AuthSession(
             user = User(
@@ -43,11 +43,11 @@ class AuthRepositoryImpl(
         email: String,
         password: String
     ): Result<AuthSession> = runCatchingApi {
-        // Register için Login ile aynı DTO yapısını kullanıyoruz
+        // TODO YERİNE EKLENEN KISIM: Login yerine register ucuna istek atıyoruz
         authApi.register(CredentialsDto(email = email, password = password))
-    }.onSuccess { tokenPairDto ->
-        // Kayıt başarılı olduğunda kullanıcıyı direkt içeri almak için token'ı kaydediyoruz
-        tokenStore.save(tokenPairDto.accessToken, tokenPairDto.refreshToken)
+    }.onSuccess {
+        // Kayıt başarılı olursa API'den gelen token'ları DataStore'a kaydet ki otomatik giriş yapsın
+        tokenStore.save(it.accessToken, it.refreshToken)
     }.map { tokenPairDto ->
         AuthSession(
             user = User(
@@ -60,8 +60,9 @@ class AuthRepositoryImpl(
         )
     }
 
-    override suspend fun logout(): Result<Unit> = runCatchingApi {
-        // Çıkış yapıldığında cihazdaki token'ları temizle
+    override suspend fun logout(): Result<Unit> = runCatching {
+        // TODO YERİNE EKLENEN KISIM: Sadece cihazdaki token'ları siliyoruz.
+        // Token silinince `isLoggedIn` flow'u false dönecek ve uygulama Login ekranına atacak.
         tokenStore.clear()
     }
 }

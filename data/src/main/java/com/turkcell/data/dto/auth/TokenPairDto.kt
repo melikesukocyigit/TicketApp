@@ -1,9 +1,6 @@
-package com.turkcell.data.dto
+package com.turkcell.data.dto.auth
 
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class TokenPairDto(val user: UserDto, val accessToken:String, val refreshToken: String)
 
 // {
 //  "user": {
@@ -14,3 +11,5 @@ data class TokenPairDto(val user: UserDto, val accessToken:String, val refreshTo
 //  "accessToken": "string",
 //  "refreshToken": "string"
 //}
+@Serializable
+data class TokenPairDto(val user: UserDto, val accessToken:String, val refreshToken: String)

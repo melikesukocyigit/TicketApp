@@ -1,6 +1,6 @@
 package com.turkcell.data.network
 
-import com.turkcell.data.dto.RefreshRequestDto
+import com.turkcell.data.dto.auth.RefreshRequestDto
 import com.turkcell.data.local.TokenStore
 import com.turkcell.data.remote.AuthApi
 import kotlinx.coroutines.runBlocking

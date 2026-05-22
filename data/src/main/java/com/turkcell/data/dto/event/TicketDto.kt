@@ -1,4 +1,4 @@
-package com.turkcell.data.dto
+/*package com.turkcell.data.dto.event
 
 import kotlinx.serialization.Serializable
 
@@ -9,3 +9,5 @@ data class TicketDto(
     val status: String,
     val ticketTypeId: String
 )
+
+ */

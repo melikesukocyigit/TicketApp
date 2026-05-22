@@ -1,7 +1,7 @@
-package com.turkcell.data.remote
+/* package com.turkcell.data.remote
 
-import com.turkcell.data.dto.EventDto
-import com.turkcell.data.dto.TicketDto
+import com.turkcell.data.dto.event.EventDto
+import com.turkcell.data.dto.event.TicketDto
 import retrofit2.http.GET
 
 interface TicketApi {
@@ -11,3 +11,5 @@ interface TicketApi {
     @GET("me/tickets") // "Me" kategorisindeki biletlerim yolu
     suspend fun getMyTickets(): List<TicketDto>
 }
+
+ */

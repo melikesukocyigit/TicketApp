@@ -2,10 +2,10 @@ package com.turkcell.ticketapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.turkcell.core.domain.AuthRepository
-import com.turkcell.core.domain.Event
-import com.turkcell.core.domain.Ticket
-import com.turkcell.core.domain.TicketRepository
+import com.turkcell.core.domain.auth.AuthRepository
+import com.turkcell.core.domain.event.Event
+import com.turkcell.core.domain.event.EventRepository
+import com.turkcell.core.domain.event.Ticket
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +25,7 @@ data class HomeUiState(
 )
 
 class HomeViewModel(
-    private val ticketRepository: TicketRepository,
+    private val eventRepository: EventRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -34,10 +34,8 @@ class HomeViewModel(
 
     init {
         fetchEvents()
-        fetchMyTickets()
     }
 
-    // Kullanıcı sekmeler arası geçiş yaptığında State'i güncelle
     fun onTabSelected(tab: HomeTab) {
         _state.update { it.copy(selectedTab = tab) }
     }
@@ -48,28 +46,16 @@ class HomeViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, errorMessage = null) }
 
-            ticketRepository.getEvents()
+            eventRepository.getEvents()
                 .onSuccess { data ->
                     _state.update { it.copy(events = data, isLoading = false) }
                 }
                 .onFailure { error ->
-                    // LoginViewModel'de yazdığımız toUserMessage() fonksiyonunu burada da kullanıyoruz
-                    _state.update { it.copy(isLoading = false, errorMessage = error.toUserMessage()) }
+                    _state.update { it.copy(isLoading = false, errorMessage = error.message ?: "Bir hata oluştu") }
                 }
         }
     }
 
-    private fun fetchMyTickets() {
-        viewModelScope.launch {
-            ticketRepository.getMyTickets()
-                .onSuccess { data ->
-                    _state.update { it.copy(tickets = data) }
-                }
-                .onFailure { error ->
-                    _state.update { it.copy(errorMessage = error.toUserMessage()) }
-                }
-        }
-    }
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()

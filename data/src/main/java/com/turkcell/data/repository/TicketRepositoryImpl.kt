@@ -1,8 +1,8 @@
-package com.turkcell.data.repository
+package com.turkcell.data.repository/* package com.turkcell.data.repository
 
-import com.turkcell.core.domain.Event
-import com.turkcell.core.domain.Ticket
-import com.turkcell.core.domain.TicketRepository
+import com.turkcell.core.domain.event.Event
+import com.turkcell.core.domain.event.Ticket
+import com.turkcell.core.domain.event.TicketRepository
 import com.turkcell.data.remote.TicketApi
 import com.turkcell.data.util.runCatchingApi
 
@@ -34,3 +34,5 @@ class TicketRepositoryImpl(
         }
     }
 }
+
+ */
