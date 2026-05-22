@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.turkcell.core.domain.auth.AuthRepository
 import com.turkcell.core.domain.event.Event
 import com.turkcell.core.domain.event.EventRepository
-import com.turkcell.core.domain.event.Ticket
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

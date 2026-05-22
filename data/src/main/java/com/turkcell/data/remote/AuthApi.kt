@@ -17,3 +17,4 @@ interface AuthApi {
     @POST("/auth/refresh")
     suspend fun refresh(@Body body: RefreshRequestDto): TokenPairDto
 }
+

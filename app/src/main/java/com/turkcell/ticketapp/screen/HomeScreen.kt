@@ -34,7 +34,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.turkcell.core.domain.event.Event
-import com.turkcell.core.domain.event.Ticket
 import com.turkcell.ticketapp.viewmodel.HomeTab
 import com.turkcell.ticketapp.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -138,8 +137,8 @@ fun EventList(events: List<Event>) {
                             Text(text = it, style = MaterialTheme.typography.bodyMedium)
                             Spacer(modifier = Modifier.height(6.dp))
                         }
-                        Text(text = "📍 Mekan: ${event.venue}", style = MaterialTheme.typography.labelLarge)
-                        Text(text = "📅 Başlangıç: ${event.startsAt}", style = MaterialTheme.typography.labelMedium)
+                        Text(text = " Mekan: ${event.venue}", style = MaterialTheme.typography.labelLarge)
+                        Text(text = " Başlangıç: ${event.startsAt}", style = MaterialTheme.typography.labelMedium)
                     }
                 }
             }
