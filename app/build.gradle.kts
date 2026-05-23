@@ -79,5 +79,5 @@ dependencies {
 
     // Kotlinx Serialization JSON dönüştürücü (JakeWharton)
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-
+    implementation("com.google.zxing:core:3.5.3")
 }

@@ -18,7 +18,9 @@ import com.turkcell.ticketapp.screen.HomeScreen
 import com.turkcell.ticketapp.screen.LoginScreen
 import com.turkcell.ticketapp.screen.RegisterScreen
 import org.koin.compose.koinInject
-
+import org.koin.androidx.compose.koinViewModel
+import androidx.navigation.toRoute
+import com.turkcell.ticketapp.screen.TicketDetailScreen
 @Composable
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
@@ -43,8 +45,26 @@ private fun SplashScreen() {
 @Composable
 private fun AuthedNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Home) {
+
         composable<Home> {
-            HomeScreen()        }
+            HomeScreen(
+                onTicketClick = { clickedTicketId ->
+                    navController.navigate(TicketDetail(ticketId = clickedTicketId))
+                }
+            )
+        }
+
+        composable<TicketDetail> { backStackEntry ->
+            val args = backStackEntry.toRoute<TicketDetail>()
+
+            TicketDetailScreen(
+                ticketId = args.ticketId,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
     }
 }
 
@@ -68,7 +88,7 @@ private fun UnAuthedNavHost(navController: NavHostController) {
                     navController.navigate(Login)
                 },
                 onNavigateToLogin = {
-                    navController.popBackStack() // Geri dön
+                    navController.popBackStack()
                 }
             )
         }

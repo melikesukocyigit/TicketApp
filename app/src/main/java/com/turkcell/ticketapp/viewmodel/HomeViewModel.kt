@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.turkcell.core.domain.auth.AuthRepository
 import com.turkcell.core.domain.event.Event
 import com.turkcell.core.domain.event.EventRepository
+import com.turkcell.core.domain.event.Ticket
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +34,7 @@ class HomeViewModel(
 
     init {
         fetchEvents()
+        fetchMyTickets()
     }
 
     fun onTabSelected(tab: HomeTab) {
@@ -50,7 +52,21 @@ class HomeViewModel(
                     _state.update { it.copy(events = data, isLoading = false) }
                 }
                 .onFailure { error ->
-                    _state.update { it.copy(isLoading = false, errorMessage = error.message ?: "Bir hata oluştu") }
+                    _state.update { it.copy(isLoading = false, errorMessage = error.message ?: "Etkinlikler yüklenemedi") }
+                }
+        }
+    }
+
+    private fun fetchMyTickets() {
+        viewModelScope.launch {
+            eventRepository.getMyTickets()
+                .onSuccess { data ->
+                    android.util.Log.d("BiletTesti", "Sunucudan gelen bilet sayısı: ${data.size}")
+                    _state.update { it.copy(tickets = data) }
+                }
+                .onFailure { error ->
+                    android.util.Log.e("BiletTesti", "Bilet çekerken hata: ", error)
+                    _state.update { it.copy(errorMessage = "Bilet Hatası: ${error.message}") }
                 }
         }
     }
