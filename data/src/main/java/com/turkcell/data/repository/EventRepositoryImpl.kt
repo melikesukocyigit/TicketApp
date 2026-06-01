@@ -2,7 +2,7 @@ package com.turkcell.data.repository
 
 import com.turkcell.core.domain.event.Event
 import com.turkcell.core.domain.event.EventRepository
-import com.turkcell.core.domain.event.Ticket // YENİ EKLENDİ
+import com.turkcell.core.domain.event.Ticket
 import com.turkcell.data.mapper.toDomain
 import com.turkcell.data.remote.EventApi
 import com.turkcell.data.util.runCatchingApi
@@ -16,4 +16,7 @@ class EventRepositoryImpl(
 
     override suspend fun getMyTickets(): Result<List<Ticket>> =
         runCatchingApi { eventApi.getMyTickets() }.map { list -> list.map { it.toDomain() } }
+
+    override suspend fun getEvent(id: String): Result<Event> =
+        runCatchingApi { eventApi.getEvent(id) }.map { it.toDomain() }
 }

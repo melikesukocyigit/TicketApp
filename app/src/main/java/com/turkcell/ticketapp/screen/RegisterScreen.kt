@@ -22,10 +22,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.turkcell.ticketapp.R
 import com.turkcell.ticketapp.viewmodel.RegisterViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -35,10 +37,8 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
-    // ViewModel'deki state'i Compose'un yaşam döngüsüne uygun şekilde dinliyoruz
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    // Kayıt başarılı olduğunda tetiklenecek olay
     LaunchedEffect(state.isRegistered) {
         if (state.isRegistered) {
             onRegisterSuccess()
@@ -53,13 +53,13 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("Kayıt Ol", style = MaterialTheme.typography.displaySmall)
+            Text(stringResource(R.string.register_title), style = MaterialTheme.typography.displaySmall)
             Spacer(Modifier.height(24.dp))
 
             OutlinedTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChange,
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.email_label)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth(),
@@ -69,7 +69,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChange,
-                label = { Text("Şifre") },
+                label = { Text(stringResource(R.string.password_label)) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -80,14 +80,13 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = state.confirmPassword,
                 onValueChange = viewModel::onConfirmPasswordChange,
-                label = { Text("Şifre Tekrar") },
+                label = { Text(stringResource(R.string.password_confirm_label)) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            // Hata mesajı varsa göster
             if (state.errorMessage != null) {
                 Spacer(Modifier.height(12.dp))
                 Text(
@@ -110,13 +109,13 @@ fun RegisterScreen(
                         color = LocalContentColor.current,
                     )
                 } else {
-                    Text("Kayıt Ol")
+                    Text(stringResource(R.string.register_title))
                 }
             }
 
             Spacer(Modifier.height(24.dp))
             TextButton(onClick = onNavigateToLogin) {
-                Text("Zaten hesabın var mı? Giriş yap")
+                Text(stringResource(R.string.already_have_account))
             }
         }
     }

@@ -20,7 +20,11 @@ import com.turkcell.ticketapp.screen.RegisterScreen
 import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
 import androidx.navigation.toRoute
+import com.turkcell.ticketapp.screen.CheckInScreen
+import com.turkcell.ticketapp.screen.EventDetailScreen
+import com.turkcell.ticketapp.screen.PendingPurchasesScreen
 import com.turkcell.ticketapp.screen.TicketDetailScreen
+
 @Composable
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
@@ -41,30 +45,55 @@ private fun SplashScreen() {
         CircularProgressIndicator()
     }
 }
-
 @Composable
 private fun AuthedNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Home) {
 
+
         composable<Home> {
             HomeScreen(
-                onTicketClick = { clickedTicketId ->
-                    navController.navigate(TicketDetail(ticketId = clickedTicketId))
+                onEventClick = { eventId ->
+                    navController.navigate(EventDetail(eventId))
+                },
+                onTicketClick = { ticketId ->
+                    navController.navigate(TicketDetail(ticketId))
+                },
+                onPendingPurchasesClick = {
+                    navController.navigate(PendingPurchases)
+                },
+                onCheckInClick = {
+                    navController.navigate(CheckIn)
                 }
             )
         }
-
         composable<TicketDetail> { backStackEntry ->
             val args = backStackEntry.toRoute<TicketDetail>()
 
             TicketDetailScreen(
                 ticketId = args.ticketId,
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                onBackClick = { navController.popBackStack() }
             )
         }
 
+        composable<EventDetail> { backStackEntry ->
+            val args = backStackEntry.toRoute<EventDetail>()
+
+            EventDetailScreen(
+                onBackClick = { navController.popBackStack() },
+                onNavigateToTickets = {
+                    navController.navigate(Home) {
+                        popUpTo(0)
+                    }
+                }
+            )
+        }
+        composable<PendingPurchases> {
+            PendingPurchasesScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable<CheckIn> { CheckInScreen(onBackClick = { navController.popBackStack() })
+        }
     }
 }
 

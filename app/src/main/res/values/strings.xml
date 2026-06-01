@@ -1,3 +1,52 @@
 <resources>
-    <string name="app_name">Ticket App</string>
+    <string name="app_name">TicketApp</string>
+
+    <!-- Auth (Login & Register) -->
+    <string name="register_title">Kayıt Ol</string>
+    <string name="login_title">Giriş Yap</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Şifre</string>
+    <string name="password_confirm_label">Şifre Tekrar</string>
+    <string name="already_have_account">Zaten hesabın var mı? Giriş yap</string>
+    <string name="dont_have_account">Hesabın yok mu? Kayıt ol</string>
+
+    <!-- Home Screen -->
+    <string name="staff_read_ticket">Bilet Oku</string>
+    <string name="pending_tab">Bekleyenler</string>
+    <string name="logout">Çıkış</string>
+    <string name="tab_events">Etkinlikler</string>
+    <string name="tab_my_tickets">Biletlerim</string>
+    <string name="no_events">Gösterilecek etkinlik bulunamadı.</string>
+    <string name="no_tickets">Henüz satın alınmış biletiniz bulunmuyor.</string>
+    <string name="ticket_valid">Geçerli</string>
+    <string name="ticket_invalid">Geçersiz</string>
+    <string name="unknown_event">BİLİNMEYEN ETKİNLİK</string>
+
+    <!-- Event Detail -->
+    <string name="event_detail_title">Etkinlik Detayı</string>
+    <string name="back">Geri</string>
+    <string name="buy_button">Satın Al</string>
+    <string name="ticket_types">Bilet Türleri</string>
+    <string name="payment_confirm_title">Ödeme Onayı</string>
+    <string name="confirm_and_pay">Onayla ve Öde</string>
+    <string name="cancel">İptal</string>
+
+    <!-- Pending Purchases -->
+    <string name="pending_purchases_title">Bekleyen Ödemeler</string>
+    <string name="no_pending_purchases">Bekleyen ödemeniz bulunmuyor.</string>
+    <string name="complete_payment_title">Ödemeyi Tamamla</string>
+    <string name="pay_button">Öde</string>
+
+    <!-- Ticket Detail & Check-in -->
+    <string name="ticket_detail_title">Bilet Detayı</string>
+    <string name="entrance_ticket">GİRİŞ BİLETİ</string>
+    <string name="ticket_id">BİLET ID</string>
+    <string name="checkin_title">QR Bilet Oku (STAFF)</string>
+    <string name="read_from_gallery">Galeriden Oku</string>
+    <string name="camera_permission_required">QR okumak için kamera izni gerekiyor.</string>
+    <string name="grant_permission">İzin Ver</string>
+    <string name="success">Başarılı!</string>
+    <string name="invalid_ticket_title">Geçersiz Bilet</string>
+    <string name="ticket_verified">Bilet doğrulandı, misafir giriş yapabilir.</string>
+    <string name="scan_next_ticket">Sonraki Bileti Okut</string>
 </resources>

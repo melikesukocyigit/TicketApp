@@ -1,18 +1,23 @@
 package com.turkcell.ticketapp.screen
 
+import android.app.Activity
 import android.graphics.Bitmap
+import android.view.WindowManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
+import com.turkcell.ticketapp.R
 
 @Composable
 fun QrCodeView(
@@ -69,13 +75,30 @@ fun TicketDetailScreen(
     ticketId: String,
     onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    DisposableEffect(Unit) {
+        val window = (context as? Activity)?.window
+        val originalBrightness = window?.attributes?.screenBrightness
+
+        window?.attributes = window?.attributes?.apply {
+            screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL
+        }
+
+        onDispose {
+            window?.attributes = window?.attributes?.apply {
+                screenBrightness = originalBrightness ?: WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Bilet Detayı", style = MaterialTheme.typography.titleMedium) },
+                title = { Text(stringResource(R.string.ticket_detail_title), style = MaterialTheme.typography.titleMedium) },
                 navigationIcon = {
                     TextButton(onClick = onBackClick) {
-                        Text("Geri", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+                        Text(stringResource(R.string.back), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -105,7 +128,7 @@ fun TicketDetailScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "GİRİŞ BİLETİ",
+                        text = stringResource(R.string.entrance_ticket),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         letterSpacing = 2.sp
@@ -137,7 +160,7 @@ fun TicketDetailScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
-                        text = "BİLET ID",
+                        text = stringResource(R.string.ticket_id),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

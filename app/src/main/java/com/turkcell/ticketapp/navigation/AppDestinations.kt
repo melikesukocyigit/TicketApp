@@ -10,6 +10,14 @@ object Register
 
 @Serializable
 object Home
-
+@Serializable
+data class EventDetail(val id: String)
 @Serializable
 data class TicketDetail(val ticketId: String)
+
+@Serializable
+object PendingPurchases
+@Serializable
+object CheckIn
+
+

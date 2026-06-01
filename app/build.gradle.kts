@@ -80,4 +80,12 @@ dependencies {
     // Kotlinx Serialization JSON dönüştürücü (JakeWharton)
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("com.google.zxing:core:3.5.3")
+
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.32.0")
+
+    // CameraX (QR Okuma İçin)
+    implementation("androidx.camera:camera-camera2:1.3.1")
+    implementation("androidx.camera:camera-lifecycle:1.3.1")
+    implementation("androidx.camera:camera-view:1.3.1")
 }

@@ -19,6 +19,7 @@ class AuthRepositoryImpl(
     // Kullanıcının giriş yapıp yapmadığını token'ın varlığına göre dinliyoruz
     override val isLoggedIn: Flow<Boolean> = tokenStore.accessToken.map { it != null }
 
+    override val currentUser: Flow<User?> = kotlinx.coroutines.flow.flowOf(null)
     override suspend fun login(
         email: String,
         password: String

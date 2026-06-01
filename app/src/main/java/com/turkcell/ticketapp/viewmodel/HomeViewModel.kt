@@ -6,6 +6,7 @@ import com.turkcell.core.domain.auth.AuthRepository
 import com.turkcell.core.domain.event.Event
 import com.turkcell.core.domain.event.EventRepository
 import com.turkcell.core.domain.event.Ticket
+import com.turkcell.core.domain.event.TicketRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,13 +21,15 @@ data class HomeUiState(
     val events: List<Event> = emptyList(),
     val tickets: List<Ticket> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
     val selectedTab: HomeTab = HomeTab.EVENTS
 )
 
 class HomeViewModel(
     private val eventRepository: EventRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val ticketRepository: TicketRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState())
@@ -59,14 +62,26 @@ class HomeViewModel(
 
     private fun fetchMyTickets() {
         viewModelScope.launch {
-            eventRepository.getMyTickets()
+            ticketRepository.getMyTickets()
                 .onSuccess { data ->
-                    android.util.Log.d("BiletTesti", "Sunucudan gelen bilet sayısı: ${data.size}")
                     _state.update { it.copy(tickets = data) }
                 }
                 .onFailure { error ->
-                    android.util.Log.e("BiletTesti", "Bilet çekerken hata: ", error)
                     _state.update { it.copy(errorMessage = "Bilet Hatası: ${error.message}") }
+                }
+        }
+    }
+
+    fun refreshTickets() {
+        viewModelScope.launch {
+            _state.update { it.copy(isRefreshing = true, errorMessage = null) }
+
+            ticketRepository.getMyTickets()
+                .onSuccess { data ->
+                    _state.update { it.copy(tickets = data, isRefreshing = false) }
+                }
+                .onFailure { error ->
+                    _state.update { it.copy(isRefreshing = false, errorMessage = "Biletler güncellenemedi: ${error.message}") }
                 }
         }
     }
@@ -75,5 +90,12 @@ class HomeViewModel(
         viewModelScope.launch {
             authRepository.logout()
         }
+    }
+
+
+    fun isUserStaff(): Boolean {
+        // Kendi e-postanı kontrol ederek testini yapabilirsin
+        val currentUserEmail = "melike@gmail.com" // Bunu AuthRepository'den aldığını varsayıyoruz
+        return currentUserEmail == "melike@gmail.com" || currentUserEmail.contains("staff")
     }
 }
