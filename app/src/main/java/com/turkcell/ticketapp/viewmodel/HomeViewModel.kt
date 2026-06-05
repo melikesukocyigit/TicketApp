@@ -16,14 +16,19 @@ import kotlinx.coroutines.launch
 enum class HomeTab {
     EVENTS, TICKETS
 }
-
 data class HomeUiState(
+    val selectedTab: HomeTab = HomeTab.EVENTS,
+
     val events: List<Event> = emptyList(),
+    val isEventsLoading: Boolean = false,
+    val isEventsRefreshing: Boolean = false,
+    val eventsError: String? = null,
+
+    // Biletler için State
     val tickets: List<Ticket> = emptyList(),
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val errorMessage: String? = null,
-    val selectedTab: HomeTab = HomeTab.EVENTS
+    val isTicketsLoading: Boolean = false,
+    val isTicketsRefreshing: Boolean = false,
+    val ticketsError: String? = null
 )
 
 class HomeViewModel(
@@ -36,6 +41,7 @@ class HomeViewModel(
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
 
     init {
+        _state.update { it.copy(isEventsLoading = true, isTicketsLoading = true) }
         fetchEvents()
         fetchMyTickets()
     }
@@ -44,47 +50,56 @@ class HomeViewModel(
         _state.update { it.copy(selectedTab = tab) }
     }
 
-    fun consumeError() = _state.update { it.copy(errorMessage = null) }
+    // ETKİNLİK İŞLEMLERİ
+
+    fun refreshEvents() {
+        if (_state.value.isEventsRefreshing) return
+
+        _state.update { it.copy(isEventsRefreshing = true, eventsError = null) }
+        fetchEvents()
+    }
 
     private fun fetchEvents() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, errorMessage = null) }
-
             eventRepository.getEvents()
                 .onSuccess { data ->
-                    _state.update { it.copy(events = data, isLoading = false) }
+                    _state.update {
+                        it.copy(events = data, isEventsLoading = false, isEventsRefreshing = false, eventsError = null)
+                    }
                 }
                 .onFailure { error ->
-                    _state.update { it.copy(isLoading = false, errorMessage = error.message ?: "Etkinlikler yüklenemedi") }
+                    _state.update {
+                        it.copy(isEventsLoading = false, isEventsRefreshing = false, eventsError = error.message ?: "Etkinlikler yüklenemedi.")
+                    }
                 }
         }
+    }
+
+    //  BİLET İŞLEMLERİ
+
+    fun refreshTickets() {
+        if (_state.value.isTicketsRefreshing) return
+
+        _state.update { it.copy(isTicketsRefreshing = true, ticketsError = null) }
+        fetchMyTickets()
     }
 
     private fun fetchMyTickets() {
         viewModelScope.launch {
             ticketRepository.getMyTickets()
                 .onSuccess { data ->
-                    _state.update { it.copy(tickets = data) }
+                    _state.update {
+                        it.copy(tickets = data, isTicketsLoading = false, isTicketsRefreshing = false, ticketsError = null)
+                    }
                 }
                 .onFailure { error ->
-                    _state.update { it.copy(errorMessage = "Bilet Hatası: ${error.message}") }
+                    _state.update {
+                        it.copy(isTicketsLoading = false, isTicketsRefreshing = false, ticketsError = "Bilet Hatası: ${error.message}")
+                    }
                 }
         }
     }
 
-    fun refreshTickets() {
-        viewModelScope.launch {
-            _state.update { it.copy(isRefreshing = true, errorMessage = null) }
-
-            ticketRepository.getMyTickets()
-                .onSuccess { data ->
-                    _state.update { it.copy(tickets = data, isRefreshing = false) }
-                }
-                .onFailure { error ->
-                    _state.update { it.copy(isRefreshing = false, errorMessage = "Biletler güncellenemedi: ${error.message}") }
-                }
-        }
-    }
 
     fun logout() {
         viewModelScope.launch {
@@ -93,9 +108,4 @@ class HomeViewModel(
     }
 
 
-    fun isUserStaff(): Boolean {
-        // Kendi e-postanı kontrol ederek testini yapabilirsin
-        val currentUserEmail = "melike@gmail.com" // Bunu AuthRepository'den aldığını varsayıyoruz
-        return currentUserEmail == "melike@gmail.com" || currentUserEmail.contains("staff")
-    }
 }

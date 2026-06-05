@@ -9,6 +9,6 @@ class CheckInRepositoryImpl(
     private val checkInApi: CheckInApi
 ) : CheckInRepository {
     override suspend fun scanTicket(ticketId: String): Result<Unit> = runCatchingApi {
-        checkInApi.scanTicket(ScanRequestDto(ticketId))
+        checkInApi.scanTicket(ScanRequestDto(qrCode = ticketId))
     }
 }

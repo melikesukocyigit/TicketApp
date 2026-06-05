@@ -16,18 +16,23 @@ class AuthRepositoryImpl(
     private val tokenStore: TokenStore
 ) : AuthRepository {
 
-    // Kullanıcının giriş yapıp yapmadığını token'ın varlığına göre dinliyoruz
     override val isLoggedIn: Flow<Boolean> = tokenStore.accessToken.map { it != null }
 
-    override val currentUser: Flow<User?> = kotlinx.coroutines.flow.flowOf(null)
+    override val currentUser: Flow<User?> = tokenStore.user
+
     override suspend fun login(
         email: String,
         password: String
     ): Result<AuthSession> = runCatchingApi {
         authApi.login(CredentialsDto(email = email, password = password))
     }.onSuccess {
-        // Giriş başarılı olursa API'den gelen token'ları DataStore'a kaydet
-        tokenStore.save(it.accessToken, it.refreshToken)
+        tokenStore.save(
+            access = it.accessToken,
+            refresh = it.refreshToken,
+            id = it.user.id,
+            email = it.user.email,
+            role = it.user.role
+        )
     }.map { tokenPairDto ->
         AuthSession(
             user = User(
@@ -44,11 +49,15 @@ class AuthRepositoryImpl(
         email: String,
         password: String
     ): Result<AuthSession> = runCatchingApi {
-        // TODO YERİNE EKLENEN KISIM: Login yerine register ucuna istek atıyoruz
         authApi.register(CredentialsDto(email = email, password = password))
     }.onSuccess {
-        // Kayıt başarılı olursa API'den gelen token'ları DataStore'a kaydet ki otomatik giriş yapsın
-        tokenStore.save(it.accessToken, it.refreshToken)
+        tokenStore.save(
+            access = it.accessToken,
+            refresh = it.refreshToken,
+            id = it.user.id,
+            email = it.user.email,
+            role = it.user.role
+        )
     }.map { tokenPairDto ->
         AuthSession(
             user = User(

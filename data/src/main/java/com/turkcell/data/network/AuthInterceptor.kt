@@ -26,6 +26,8 @@ class AuthInterceptor(private val tokenStore: TokenStore) : Interceptor
             .newBuilder() // original isteğin klonunu yaratır..
             .header("Authorization", "Bearer $token")
             .build()
+
+        android.util.Log.d("PATH_DEBUG", "İstek yolu: $path")
         return chain.proceed(authedRequest)
     }
 

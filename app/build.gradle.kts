@@ -88,4 +88,7 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.1")
     implementation("androidx.camera:camera-lifecycle:1.3.1")
     implementation("androidx.camera:camera-view:1.3.1")
+    implementation("io.github.g0dkar:qrcode-kotlin:4.5.0")
+
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
